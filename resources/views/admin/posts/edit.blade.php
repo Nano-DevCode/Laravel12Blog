@@ -93,10 +93,10 @@
                     Texto
                 </p>
                 <div id="editor">
-                    {!!old('excerpt', $post->content)!!}
+                    {!!old('content', $post->content)!!}
                 </div>
                 <textarea class="hidden" name="content" id="content">
-                    {{old('excerpt', $post->content)}}
+                    {{old('content', $post->content)}}
                 </textarea>
             </div>
 
@@ -149,6 +149,22 @@
                 });
             });
         </script>
+
+        @if ($errors->any())
+
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html:`<ul class="text-left">
+                            @foreach ($errors->all() as $error)
+                               <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>`,
+                });
+            </script>
+
+        @endif
     @endpush
 
 </x-layouts.admin>
