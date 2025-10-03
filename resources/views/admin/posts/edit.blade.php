@@ -2,6 +2,7 @@
 
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @endpush
 
@@ -73,16 +74,19 @@
 
             </flux:field>
 
-            <div >
-                <select id="tags" name="tags" >
-                    <option value="1">Etiqueta 1</option>
-                    <option value="2">Etiqueta 2</option>
-                    <option value="3">Etiqueta 3</option>
-                    <option value="4">Etiqueta 4</option>
-                    <option value="5">Etiqueta 5</option>
-                    <option value="6">Etiqueta 6</option>
+            <flux:field>
+                <flux:label>
+                    Etiquetas
+                </flux:label>
+                <select id="tags" name="tags[]" multiple="multiple">
+                    @foreach ($tags as $tag)
+                        <option value="{{$tag->name}}" @selected(in_array($tag->name, old('tags', $post->tags->pluck('name')->toArray())))>
+                            {{$tag->name}}
+                        </option>
+                    @endforeach
                 </select>
-            </div>
+                <flux:error name="tags[]" />
+            </flux:field>
 
             <div>
                 <p class="font-medium text-sm mb-1">
@@ -119,12 +123,18 @@
     </form>
 
     @push('js')
+
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
         <script>
             const quill = new Quill('#editor', {
                 theme: 'snow'
@@ -133,7 +143,10 @@
                 document.querySelector('#content').value = quill.root.innerHTML;
             });
             $(document).ready(function() {
-                $('#tags').select2();
+                $('#tags').select2({
+                    tags: true,
+                    tokenSeparators: [',']
+                });
             });
         </script>
     @endpush
