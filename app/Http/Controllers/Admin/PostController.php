@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -22,7 +23,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest('id')->paginate();
+        $posts = Post::latest('id')
+            ->where('user_id', auth()->id())
+            ->paginate();
 
         return view('admin.posts.index', compact('posts'));
     }
@@ -73,6 +76,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
 
+        Gate::authorize('author', $post);
+
         $categories = Category::all();
         $tags = Tag::all();
 
@@ -84,6 +89,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        Gate::authorize('author', $post);
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => [
@@ -157,6 +163,18 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        Gate::authorize('author', $post);
+
+        $post->delete();
+
+        session()->flash('swal',[
+            'icon' => 'success',
+            'title' => 'Post eliminado',
+            'text' => 'El posts se ha eliminado correctamente'
+        ]);
+
+        return redirect()->route('admin.posts.index');
+
+
     }
 }

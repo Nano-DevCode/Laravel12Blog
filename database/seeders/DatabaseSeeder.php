@@ -19,13 +19,13 @@ class DatabaseSeeder extends Seeder
     {
         Storage::deleteDirectory('posts');
         Storage::createDirectory('posts');
-        // User::factory(10)->create();
 
         User::factory()->create([
             'name' => 'Manuel Eduardo',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123456789'),
         ]);
+        User::factory(5)->create();
 
         Category::factory(10)->create();
         Post::factory(100)->create();
