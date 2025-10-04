@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\UploadedImage;
 use App\Http\Controllers\Controller;
+use App\Jobs\ResizeImage;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
+
 
 class PostController extends Controller
 {
@@ -79,13 +86,52 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:posts,slug,' . $post->id,
+            'slug' => [
+                Rule::requiredIf(function() use ($post){
+                    return !$post->published_at;
+                }),
+                'string',
+                'max:255',
+                Rule::unique('posts')->ignore($post->id)
+            ],
+            'image' => 'nullable|image|max:12048',
             'category_id' => 'required|integer|exists:categories,id',
             'excerpt' => 'required_if:is_published,1|string',
             'content' => 'required_if:is_published,1|string',
             'tags' => 'array',
             'is_published' => 'required|boolean'
         ]);
+
+        if($request->hasFile('image')){
+            if($post->image_path){
+                Storage::delete($post->image_path);
+            }
+
+            $data['image_path'] = Storage::put('posts',$request->image);
+
+            /*
+            Si quieres usarlo desde aqui
+            $upload = $request->file('image');
+            $image = Image::read($upload)
+            ->scale(width:1200);
+
+            $path = 'posts/' . Str::random() . '.' . $upload->getClientOriginalExtension();
+
+            Storage::put(
+                $path,
+                $image->encodeByExtension($upload->getClientOriginalExtension(), quality: 70)
+            );
+
+            $data['image_path'] = $path;
+            */
+
+            /*
+            Si quieres usarlo con jobs
+            ResizeImage::dispatch($data['image_path']);
+            */
+
+            UploadedImage::dispatch($data['image_path']);
+        }
 
         $post->update($data);
 

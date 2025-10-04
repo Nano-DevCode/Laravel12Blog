@@ -20,19 +20,26 @@
         </flux:breadcrumbs>
     </div>
 
-    <form action="{{route('admin.posts.update', $post)}}" method="POST">
+    <form action="{{route('admin.posts.update', $post)}}" method="POST" enctype="multipart/form-data">
         @csrf
 
         @method('PUT')
 
         <div class="relative mb-4">
             <img id="imgPreview" class="w-full aspect-video object-cover object-center"
-                src="https://image.pngaaa.com/13/1887013-middle.png" alt="">
+                src="{{ $post->image_path ? Storage::url($post->image_path) : 'https://image.pngaaa.com/13/1887013-middle.png' }}" alt="">
+
             <div class="absolute top-8 right-8">
                 <label class="bg-white px-4 py-2 rounded-lg cursor-pointer " style="color: black;">
                     Cambiar Imagen
                     <input onchange="preview_image(event, '#imgPreview')" class="hidden" name="image" type="file" accept="image/*">
                 </label>
+
+                <div class="bg-2white mt-4">
+                    <a href="{{route('prueba',$post)}}">
+                        Descargar imagen
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -43,11 +50,13 @@
                 <flux:error name="title" />
             </flux:field>
 
-            <flux:field>
-                <flux:label>Slug del Post</flux:label>
-                <flux:input name="slug" id="slug" value="{{old('slug', $post->slug)}}"/>
-                <flux:error name="slug" />
-            </flux:field>
+            @if (!$post->is_published)
+                <flux:field>
+                    <flux:label>Slug del Post</flux:label>
+                    <flux:input name="slug" id="slug" value="{{old('slug', $post->slug)}}"/>
+                    <flux:error name="slug" />
+                </flux:field>
+            @endif
 
             <flux:field>
                 <flux:label>

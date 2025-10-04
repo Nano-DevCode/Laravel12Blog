@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
@@ -26,6 +28,12 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+Route::get('/prueba/{post}', function(Post $post){
+
+    return Storage::download($post->image_path);
+
+})->name('prueba');
 
 require __DIR__.'/auth.php';
 
