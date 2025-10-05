@@ -27,7 +27,7 @@
 
         <div class="relative mb-4">
             <img id="imgPreview" class="w-full aspect-video object-cover object-center"
-                src="{{ $post->image_path ? Storage::url($post->image_path) : 'https://image.pngaaa.com/13/1887013-middle.png' }}" alt="">
+                src="{{ $post->image }}" alt="">
 
             <div class="absolute top-8 right-8">
                 <label class="bg-white px-4 py-2 rounded-lg cursor-pointer " style="color: black;">

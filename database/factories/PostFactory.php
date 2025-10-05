@@ -24,7 +24,7 @@ class PostFactory extends Factory
             'excerpt' =>fake()->paragraph(),
             'content' => fake()->paragraph(20, true),
             'is_published' => fake()->boolean(),
-            'published_at' => fake()->dateTime(),
+            //'published_at' => fake()->dateTime(),
             'user_id' => User::all()->random()->id,
             'category_id' => Category::all()->random()->id
         ];
