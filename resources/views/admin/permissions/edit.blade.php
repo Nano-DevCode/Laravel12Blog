@@ -14,12 +14,6 @@
         </flux:breadcrumbs>
     </div>
 
-    <div class="flex justify-end mb-6">
-        <a class="btn btn-green" href="{{route('admin.permissions.create')}}">
-            Nuevo Persmiso
-        </a>
-    </div>
-
     <form action="{{route('admin.permissions.update', $permission)}}" method="POST" class="px-6 py-8 rounded shadow-lg space-y-4">
         @csrf
 

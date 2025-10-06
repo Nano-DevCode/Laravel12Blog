@@ -30,7 +30,18 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions',
+        ]);
+        $permission = Permission::create([
+            'name' => $request->name,
+        ]);
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Permiso creado',
+            'text' => 'El permiso se ha creado correctamente'
+        ]);
+        return redirect()->route('admin.permissions.index');
     }
 
     /**

@@ -6,7 +6,7 @@
                 Dashboard
             </flux:breadcrumbs.item>
             <flux:breadcrumbs.item href="{{route('admin.permissions.index')}}">
-                Persmisos
+                Permisos
             </flux:breadcrumbs.item>
             <flux:breadcrumbs.item href="#">
                 Crear
@@ -14,9 +14,19 @@
         </flux:breadcrumbs>
     </div>
 
-    <div class="flex justify-end mb-6">
-        <a class="btn btn-green" href="{{route('admin.categories.create')}}">
-            Nueva Categoría
-        </a>
-    </div>
+    <form action="{{route('admin.permissions.store')}}" method="POST" class="px-6 py-8 rounded shadow-lg space-y-4">
+        @csrf
+
+        <flux:field>
+            <flux:label>Nombre del Permiso</flux:label>
+            <flux:input name="name" value="{{old('name')}}"/>
+            <flux:error name="name" />
+        </flux:field>
+
+        <div class="flex justify-center">
+            <flux:button variant="primary" type="submit">
+                Crear Permiso
+            </flux:button>
+        </div>
+    </form>
 </x-layouts.admin>
