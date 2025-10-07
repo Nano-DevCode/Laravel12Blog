@@ -44,12 +44,12 @@
         </flux:field>
 
         <flux:field>
-            <flux:label>Permisos</flux:label>
+            <flux:label>Roles</flux:label>
             <ul>
                 @foreach ($roles as $role)
                     <li>
                         <label class="flex items-center">
-                            <input type="checkbox" name="roles[]" value="{{$role->id}}" >
+                            <input type="checkbox" name="roles[]" value="{{$role->id}}" @checked(in_array($role->id, old('roles',$user->roles->pluck('id')->toArray())))>
                             <span class="ml-1"> {{$role->name}}</span>
                         </label>
                     </li>

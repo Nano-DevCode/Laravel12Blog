@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -16,8 +18,14 @@ use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 
 
-class PostController extends Controller
+class PostController extends Controller implements HasMiddleware
 {
+    public static function middleware():array
+    {
+        return [
+            new Middleware('can:manage posts')
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

@@ -7,9 +7,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware():array
+    {
+        return [
+            new Middleware('can:manage users')
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -24,8 +32,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all();
-        return view('admin.users.create', compact('permissions'));
+        $roles = Role::all();
+        return view('admin.users.create', compact('roles'));
     }
 
     /**
@@ -38,13 +46,15 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|max:255',
             'password_confirmation' => 'required|string|same:password',
-            /*'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',*/
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,id',
         ]);
 
         $data['password'] = bcrypt($data['password']);
 
         $user = User::create($data);
+
+        $user->roles()->attach($data['roles']);
 
         session()->flash('swal', [
             'icon' => 'success',
@@ -91,6 +101,8 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        $user->roles()->sync($request->input('roles', []));
 
         return redirect()->route('admin.users.edit', $user);
 

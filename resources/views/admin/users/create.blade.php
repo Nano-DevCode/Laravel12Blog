@@ -41,6 +41,21 @@
             <flux:error name="password_confirmation" />
         </flux:field>
 
+        <flux:field>
+            <flux:label>Roles</flux:label>
+            <ul>
+                @foreach ($roles as $role)
+                    <li>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="roles[]" value="{{$role->id}}" @checked(in_array($role->id, old('roles',[])))>
+                            <span class="ml-1"> {{$role->name}}</span>
+                        </label>
+                    </li>
+                @endforeach
+            </ul>
+            <flux:error name="roles[]" />
+        </flux:field>
+
         <div class="flex justify-center">
             <flux:button variant="primary" type="submit">
                 Crear Usuario
